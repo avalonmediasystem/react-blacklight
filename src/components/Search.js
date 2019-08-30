@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 import SearchResults from './SearchResults';
+import Pagination from './Pagination';
 
 class Search extends Component {
     constructor() {
         super();
         this.state = {
             query: "",
-            documents: []
+            documents: [],
+            pages: {}
         };
     }
 
@@ -18,14 +20,20 @@ class Search extends Component {
     handleSearchSubmit = event => {
         // Perform ajax call and set results in state
         event.preventDefault();
-        let component = this;
-        Axios({url: "https://mallorn.dlib.indiana.edu/catalog.json?q=" + this.state.query})
-            .then(function(response){
-                console.log(response);
-                component.setState({documents: response.data.response.docs})
-            });
+        this.retrieveResults();
     }
 
+    retrieveResults(page = 1) {
+        let component = this;
+        let url = "https://mallorn.dlib.indiana.edu/catalog.json?q=" + this.state.query + "&page=" + page;
+        console.log(url);
+        Axios({url: url})
+            .then(function(response){
+                console.log(response);
+                component.setState({documents: response.data.response.docs, pages: response.data.response.pages})
+            });
+    }
+    
     render() {
         const { query } = this.state;
         return (
@@ -41,6 +49,7 @@ class Search extends Component {
                     </span>
                 </div>
             </form>
+            <Pagination pages={this.state.pages} search={this}></Pagination>
             <SearchResults documents={this.state.documents}></SearchResults>
         </div>
         );
