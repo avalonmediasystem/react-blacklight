@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import SearchComponent from './components/SearchComponent'
+import Search from './components/Search'
 
 // Font Awesome Imports
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div>
         <h1>Blacklight Search</h1>
-        <SearchComponent></SearchComponent>
+        <Search></Search>
       </div>
     );
   }
