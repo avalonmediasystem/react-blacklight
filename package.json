@@ -1,7 +1,7 @@
 {
-  "name": "starter-react-webpack-npm_packaging-project",
-  "version": "1.0.0",
-  "description": "Starter configuration for a project which handles development and npm packaging of a React/Redux micro application exported as a React component.",
+  "name": "react-blacklight",
+  "version": "0.0.1",
+  "description": "React app for Blacklight facetted search",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest --coverage --colors",
@@ -11,7 +11,9 @@
     "prepublishOnly": "npm run transpile"
   },
   "contributors": [
-    "Adam Arling <aarling@gmail.com>"
+    "Chris Colvard <cjcolvar@indiana.edu>",
+    "Phuong Dinh <phuongdh@gmail.com>",
+    "Dananji Withana <dwithana@iu.edu>"
   ],
   "keywords": [
     "React",
@@ -24,8 +26,8 @@
     "react-testing-library",
     "fontawesome"
   ],
-  "author": "Adam J. Arling",
-  "license": "ISC",
+  "author": "Avalon Media System",
+  "license": "MIT",
   "peerDependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
