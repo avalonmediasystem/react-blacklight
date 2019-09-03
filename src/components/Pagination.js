@@ -7,13 +7,13 @@ class Pagination extends Component {
 
     handleClick = (page, event) => {
         event.preventDefault();
-        this.props.search.retrieveResults(page);
+        this.props.search.setState({ currentPage: page });
     }
 
     render() {
         if (this.props.pages.total_count) {
             return (
-                <div class="sort-pagination">
+                <div className="sort-pagination">
                     {this.props.pages.prev_page != null ? 
                         (<a href="#" onClick={event => this.handleClick(this.props.pages.prev_page, event)}>Previous</a>)
                     :

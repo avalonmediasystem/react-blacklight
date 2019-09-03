@@ -10,7 +10,7 @@ class SearchResults extends Component {
             {this.props.documents.map((doc,index) => {
                 return (
                     <div>
-                        <a key={index} href={"https://mallorn.dlib.indiana.edu/media_objects/${doc['id']}"}>{doc["title_tesi"]}</a>
+                        <a key={index} href={"https://mallorn.dlib.indiana.edu/media_objects/" + doc['id']}>{doc["title_tesi"]}</a>
                         <dl>
                             <dt>Date:</dt>
                             <dd>{doc["date_ssi"]}</dd>
