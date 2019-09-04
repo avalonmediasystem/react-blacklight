@@ -20,6 +20,10 @@ class Search extends Component {
         this.setState({query: event.target.value});
     }
 
+    componentDidMount() {
+        this.retrieveResults();
+    }
+
     componentDidUpdate(prevProps, prevState) {
         if (prevState.query != this.state.query || prevState.currentPage != this.state.currentPage) {
             this.retrieveResults();   
