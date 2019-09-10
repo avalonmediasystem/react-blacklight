@@ -5,11 +5,16 @@ class Facets extends Component {
         super(props);
     }
 
-    handleClick = (facetName, item, event) => {
+    handleClick = (facetField, facetLabel, item, event) => {
         event.preventDefault();
-        let newQuery = this.props.search.state.query + "&f[" + facetName + "][]=" + item.value;
-        console.log(newQuery);
-        this.props.search.setState({query: newQuery});
+        let newAppliedFacets = this.props.search.state.appliedFacets.concat([{facetField: facetField, facetLabel: facetLabel, facetValue: item.value}]);
+        console.log(newAppliedFacets);
+        this.props.search.setState({appliedFacets: newAppliedFacets, currentPage: 1});
+    }
+
+    isFacetApplied = (facet, item) => {
+        let index = this.props.search.state.appliedFacets.findIndex((appliedFacet) => { return appliedFacet.facetField === facet.name && appliedFacet.facetValue === item.value });
+        return index != -1;
     }
 
     render() {
@@ -21,16 +26,20 @@ class Facets extends Component {
                             return (<div></div>);
                         }
                         return(
-                            <div className="card">
-                                <h3 className="card-header collapse-toggle">
+                            <div className="card mb-3">
+                                <h5 className="card-header collapse-toggle">
                                     <a>{facet.label}</a>
-                                </h3>
+                                </h5>
                                 <div className="card-body">
                                 <ul className="facet-values list-unstyled">
                                     { facet.items.map((item, index) => {
                                         return(
                                             <li>
-                                                <a href="" onClick={event => this.handleClick(facet.name, item, event)}><span className="facet-label">{item.label}</span></a>
+                                                { this.isFacetApplied(facet, item) ?
+                                                        <span className="facet-label">{item.label}</span>
+                                                    :
+                                                        <a href="" onClick={event => this.handleClick(facet.name, facet.label, item, event)}><span className="facet-label">{item.label}</span></a>
+                                                }
                                                 <span className="facet-count"> ({item.hits})</span>
                                             </li>
                                         );

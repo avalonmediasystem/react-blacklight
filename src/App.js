@@ -12,7 +12,7 @@ class App extends Component {
     return (
       <div>
         <h1>Blacklight Search</h1>
-        <Search></Search>
+        <Search baseUrl="https://mallorn.dlib.indiana.edu"></Search>
       </div>
     );
   }

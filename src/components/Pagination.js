@@ -10,6 +10,15 @@ class Pagination extends Component {
         this.props.search.setState({ currentPage: page });
     }
 
+    pageStart = (pages) => {
+        return pages.offset_value + 1;
+    }
+
+    pageEnd = (pages) => {
+        return Math.min(pages.offset_value + pages.limit_value, pages.total_count);
+    }
+
+
     render() {
         if (this.props.pages.total_count) {
             return (
@@ -19,7 +28,7 @@ class Pagination extends Component {
                     :
                         (<span>Previous</span>)
                     }
-                    <span> | {this.props.pages.offset_value + 1}-{this.props.pages.offset_value + this.props.pages.limit_value} of {this.props.pages.total_count} | </span>
+                    <span> | {this.pageStart(this.props.pages)}-{this.pageEnd(this.props.pages)} of {this.props.pages.total_count} | </span>
                     {this.props.pages.next_page != null ? 
                         (<a href="#" onClick={event => this.handleClick(this.props.pages.next_page, event)}>Next</a>)
                     :

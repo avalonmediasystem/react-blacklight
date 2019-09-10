@@ -3,21 +3,22 @@ import Axios from 'axios';
 import SearchResults from './SearchResults';
 import Pagination from './Pagination';
 import Facets from './Facets';
+import FacetBadges from './FacetBadges';
 
 class Search extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             query: "",
-            documents: [],
-            pages: {},
+            searchResult: {pages:{}, docs:[], facets:[]},
             currentPage: 1,
-            facets: []
+            appliedFacets: [],
+            perPage: 12
         };
     }
 
     handleQueryChange = event => {
-        this.setState({query: event.target.value});
+        this.setState({query: event.target.value, currentPage: 1});
     }
 
     componentDidMount() {
@@ -25,19 +26,54 @@ class Search extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.query != this.state.query || prevState.currentPage != this.state.currentPage) {
-            this.retrieveResults();   
+        if (prevState.query != this.state.query || prevState.currentPage != this.state.currentPage || prevState.appliedFacets != this.state.appliedFacets) {
+            this.retrieveResults();
         }
     }
 
     retrieveResults() {
         let component = this;
-        let url = "https://mallorn.dlib.indiana.edu/catalog.json?q=" + this.state.query + "&page=" + this.state.currentPage;
+        let facetFilters = "";
+        this.state.appliedFacets.forEach((facet) => { facetFilters = facetFilters + "&f[" + facet.facetField + "][]=" + facet.facetValue });
+        if (this.props.collection) {
+            facetFilters = facetFilters + "&f[collection_ssim][]=" + this.props.collection;
+        }
+        let url = this.props.baseUrl + "/catalog.json?per_page=" + this.state.perPage + "&q=" + this.state.query + "&page=" + this.state.currentPage + facetFilters;
+        console.log("Performing search: " + url);
         Axios({url: url})
             .then(function(response){
                 console.log(response);
-                component.setState({documents: response.data.response.docs, pages: response.data.response.pages, facets: response.data.response.facets})
+                component.setState({searchResult: response.data.response})
             });
+    }
+
+    availableFacets() {
+        let availableFacets = this.state.searchResult.facets.slice();
+        let facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Published" });
+        if (facetIndex > -1) {
+            availableFacets.splice(facetIndex, 1);
+        }
+        facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Created by" });
+        if (facetIndex > -1) {
+            availableFacets.splice(facetIndex, 1);
+        }
+        facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Date Digitized" });
+        if (facetIndex > -1) {
+            availableFacets.splice(facetIndex, 1);
+        }
+        facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Date Ingested" });
+        if (facetIndex > -1) {
+            availableFacets.splice(facetIndex, 1);
+        }
+
+        if (this.props.collection) {
+            facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Collection" });
+            availableFacets.splice(facetIndex, 1);
+            facetIndex = availableFacets.findIndex((facet) => { return facet.label === "Unit" });
+            availableFacets.splice(facetIndex, 1);
+
+        }
+        return availableFacets;
     }
     
     render() {
@@ -52,11 +88,12 @@ class Search extends Component {
             </form>
             <div className="row">
                 <section className="col-md-9">
-                    <Pagination pages={this.state.pages} search={this}></Pagination>
-                    <SearchResults documents={this.state.documents}></SearchResults>
+                    <FacetBadges facets={this.state.appliedFacets} search={this}></FacetBadges>
+                    <Pagination pages={this.state.searchResult.pages} search={this}></Pagination>
+                    <SearchResults documents={this.state.searchResult.docs} baseUrl={this.props.baseUrl}></SearchResults>
                 </section>
                 <section className="col-md-3">
-                    <Facets facets={this.state.facets} search={this}></Facets>
+                    <Facets facets={this.availableFacets()} search={this}></Facets>
                 </section>
             </div>
         </div>
